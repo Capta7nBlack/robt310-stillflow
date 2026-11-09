@@ -1,0 +1,16 @@
+{
+  "course": "ROBT310 Image Processing",
+  "institution": "Nazarbayev University",
+  "group": "Group 2",
+  "presentation_date": "10 November 2026",
+  "members": [
+    {"name": "Sayat Mushkin", "confirmed_contributions": [], "bio": ""},
+    {"name": "Yerassyl Myngtay", "confirmed_contributions": [], "bio": ""},
+    {"name": "Amir Ussembayev", "confirmed_contributions": [], "bio": ""}
+  ],
+  "original_proposal": "Satellite image upscaling",
+  "current_scope": "Interactive single-image animation using flow-field warping",
+  "historical_reason_for_change": null,
+  "current_scope_rationale": "A controllable CPU prototype with three inspectable classical image-processing algorithms and direct visual and numerical evaluation.",
+  "provenance_note": "Names confirmed from the provided group-list screenshot. Individual contributions, biographies, and the historical reason for the topic change have not been supplied. Do not infer them from commit authorship."
+}

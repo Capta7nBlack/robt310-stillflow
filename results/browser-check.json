@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "checks": [
+    "render",
+    "preview",
+    "GIF download",
+    "brush",
+    "erase",
+    "arrows",
+    "anchors",
+    "undo/redo",
+    "save/open",
+    "presets",
+    "upload",
+    "help",
+    "responsive layout"
+  ],
+  "javascript_errors": [],
+  "timestamp": "2026-11-09T20:09:55+0500"
+}

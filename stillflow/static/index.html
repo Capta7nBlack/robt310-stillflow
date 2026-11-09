@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="A local, interactive single-image animation editor. Paint a region, draw motion, and create a loop."
+    />
+    <title>Stillflow · Single-image animation</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Stillflow home"
+        ><span class="brand-icon">≋</span>stillflow<span class="version"
+          >ROBT 310</span
+        ></a
+      >
+      <div class="top-actions">
+        <span class="local-badge"><i></i> Runs on your computer</span
+        ><button id="helpButton" class="quiet">
+          How it works <span>↗</span>
+        </button>
+      </div>
+    </header>
+    <main>
+      <section class="intro">
+        <div>
+          <p class="eyebrow">INTERACTIVE SINGLE-IMAGE ANIMATION</p>
+          <h1>A still image. A little motion.</h1>
+          <p>
+            Paint what moves, draw its direction, and turn a photograph into a
+            loop.
+          </p>
+        </div>
+        <div class="project-actions">
+          <button id="openProject" class="secondary">Open project</button
+          ><button id="saveProject" class="secondary">Save project ↓</button>
+        </div>
+      </section>
+      <div class="workspace">
+        <aside class="panel controls">
+          <section class="control-section">
+            <h2><span class="step">01</span> Choose an image</h2>
+            <button id="uploadButton" class="upload-button">
+              <span>＋</span> Upload photograph
+            </button>
+            <p class="hint">PNG, JPG or WebP · up to 12 MB</p>
+            <label for="exampleSelect">Or start with an example</label
+            ><select id="exampleSelect">
+              <option value="">Loading examples…</option>
+            </select>
+            <p id="exampleDescription" class="hint"></p>
+          </section>
+          <section class="control-section">
+            <h2><span class="step">02</span> Define the motion</h2>
+            <div class="tool-grid" role="group" aria-label="Drawing tools">
+              <button
+                data-tool="paint"
+                class="tool active"
+                title="Paint moving region (M)"
+              >
+                <span>◉</span> Paint <kbd>M</kbd></button
+              ><button
+                data-tool="erase"
+                class="tool"
+                title="Erase moving region (E)"
+              >
+                <span>◌</span> Erase <kbd>E</kbd></button
+              ><button
+                data-tool="arrow"
+                class="tool"
+                title="Draw motion arrow (A)"
+              >
+                <span>↗</span> Motion <kbd>A</kbd></button
+              ><button
+                data-tool="pin"
+                class="tool"
+                title="Add a soft zero-motion anchor (P)"
+              >
+                <span>⊙</span> Anchor <kbd>P</kbd>
+              </button>
+            </div>
+            <label class="range-label" for="brush"
+              >Brush size <output id="brushValue">40 px</output></label
+            ><input id="brush" type="range" min="6" max="120" value="40" />
+            <p id="toolHint" class="hint">
+              Brush over the region you want to animate.
+            </p>
+            <div class="mini-actions">
+              <button id="undo" title="Undo (Ctrl+Z)">↶ Undo</button
+              ><button id="redo" title="Redo (Ctrl+Shift+Z)">↷ Redo</button
+              ><button id="clear" class="danger-text">Clear all</button>
+            </div>
+            <label class="checkbox"
+              ><input id="showMask" type="checkbox" checked /> Show painted
+              region</label
+            ><label class="checkbox"
+              ><input id="showFlow" type="checkbox" /> Show dense flow
+              <span class="muted">after render</span></label
+            >
+          </section>
+          <section class="control-section settings">
+            <h2><span class="step">03</span> Shape the loop</h2>
+            <label class="range-label" for="intensity"
+              >Motion strength <output id="intensityValue">1.0×</output></label
+            ><input
+              id="intensity"
+              type="range"
+              min="0"
+              max="2"
+              step="0.1"
+              value="1"
+            /><label class="range-label" for="feather"
+              >Edge softness <output id="featherValue">10 px</output></label
+            ><input id="feather" type="range" min="0" max="32" value="10" />
+            <div class="paired">
+              <div>
+                <label for="frames">Frames</label
+                ><select id="frames">
+                  <option value="16">16</option>
+                  <option value="24" selected>24</option>
+                  <option value="36">36</option>
+                  <option value="48">48</option>
+                  <option value="60">60</option>
+                </select>
+              </div>
+              <div>
+                <label for="fps">Frame rate</label
+                ><select id="fps">
+                  <option value="8">8 fps</option>
+                  <option value="12" selected>12 fps</option>
+                  <option value="16">16 fps</option>
+                  <option value="24">24 fps</option>
+                </select>
+              </div>
+            </div>
+            <label class="range-label" for="blend"
+              >Loop cross-fade <output id="blendValue">35%</output></label
+            ><input
+              id="blend"
+              type="range"
+              min="0.1"
+              max="0.8"
+              step="0.05"
+              value="0.35"
+            /><label class="checkbox"
+              ><input id="loop" type="checkbox" checked /> Blend the loop
+              boundary</label
+            >
+            <p class="hint">Turn off to compare the abrupt-reset baseline.</p>
+          </section>
+        </aside>
+        <section class="panel editor">
+          <div class="editor-header">
+            <div class="filename">
+              <span id="projectName">Loading image</span
+              ><span id="dimensions" class="muted"></span>
+            </div>
+            <div class="view-tabs" role="group" aria-label="Canvas view">
+              <button data-view="edit" class="active">Edit</button
+              ><button data-view="preview" disabled>Preview</button
+              ><button data-view="original">Original</button>
+            </div>
+          </div>
+          <div class="stage" id="stage">
+            <canvas
+              id="canvas"
+              aria-label="Image editor. Use mouse or touch to paint a mask and draw arrows."
+            ></canvas
+            ><img id="preview" alt="Rendered looping animation" hidden />
+            <div id="loading" class="loading" hidden>
+              <div class="spinner"></div>
+              <strong>Creating your loop</strong
+              ><span
+                >Interpolating motion, warping pixels, blending frames…</span
+              >
+            </div>
+            <div class="stage-tag" id="stageTag">
+              <span class="dot"></span> PAINTED REGION
+            </div>
+          </div>
+          <div class="editor-footer">
+            <span id="annotationSummary">No annotations</span
+            ><span id="canvasHint"
+              >Drag to paint · M / E / A / P to switch tools</span
+            >
+          </div>
+          <div class="render-bar">
+            <div>
+              <strong id="renderTitle">Ready when you are</strong>
+              <p id="renderSubtitle">24 frames · 2.00 second loop · 12 fps</p>
+            </div>
+            <div class="render-actions">
+              <button id="render" class="primary">
+                <span>▶</span> Render loop</button
+              ><button id="download" class="secondary" disabled>
+                Download GIF ↓
+              </button>
+            </div>
+          </div>
+          <div class="metrics" id="metrics">
+            <div>
+              <span>Render time</span><strong id="metricTime">—</strong
+              ><small>including GIF encoding</small>
+            </div>
+            <div>
+              <span>Loop seam ratio</span><strong id="metricSeam">—</strong
+              ><small>seam / median frame change</small>
+            </div>
+            <div>
+              <span>Static region error</span
+              ><strong id="metricStatic">—</strong
+              ><small>RGB levels before encoding</small>
+            </div>
+            <div>
+              <span>GIF size</span><strong id="metricSize">—</strong
+              ><small id="metricDuration">24 frames requested</small>
+            </div>
+          </div>
+          <div id="notice" class="notice" role="status" aria-live="polite">
+            Use a sample to try the complete pipeline, or upload your own
+            photograph.
+          </div>
+        </section>
+      </div>
+      <footer>
+        <span>Built for ROBT 310 · Image Processing</span
+        ><span
+          >Small motions work best. Water, clouds, and flowing textures.</span
+        ><a href="/api/docs" id="apiLink">API documentation ↗</a>
+      </footer>
+    </main>
+    <input
+      type="file"
+      id="imageInput"
+      accept="image/png,image/jpeg,image/webp"
+      hidden
+    />
+    <input
+      type="file"
+      id="projectInput"
+      accept="application/json,.json"
+      hidden
+    />
+    <dialog id="helpDialog">
+      <div class="dialog-top">
+        <p class="eyebrow">FROM ANNOTATIONS TO ANIMATION</p>
+        <button id="closeHelp" aria-label="Close help">✕</button>
+      </div>
+      <h2>Three algorithms. One loop.</h2>
+      <ol>
+        <li>
+          <strong>Interpolate a flow field.</strong> Each arrow describes a
+          displacement. Inverse-distance weights blend the sparse arrows into a
+          dense vector field. Anchors add soft zero-motion constraints.
+        </li>
+        <li>
+          <strong>Warp the original image.</strong> Every output pixel samples
+          its source at x − tD(x). A custom bilinear sampler combines the four
+          surrounding pixels. Out-of-bounds coordinates clamp to the image edge.
+        </li>
+        <li>
+          <strong>Make it loop.</strong> Near the end, smoothstep cross-fading
+          blends two shifted phases. An inward-feathered mask keeps unpainted
+          pixels exactly unchanged before GIF encoding.
+        </li>
+      </ol>
+      <p>
+        <strong>Try it:</strong> load River rapids → Render loop → Preview.
+        Return to Edit, change one arrow, and render again. Turn off loop
+        blending to see the reset artifact. Save a project to keep the image,
+        mask, arrows, and settings together.
+      </p>
+      <p>
+        <strong>Interpret the numbers:</strong> a seam ratio near 1 means the
+        last-to-first change resembles a typical frame transition. It does not
+        measure realism. No motion gives an undefined ratio. Cross-fading can
+        still produce ghosting; large arrows stretch textures. A single image
+        cannot reveal hidden content or infer true physical motion.
+      </p>
+      <p class="hint">
+        Examples are public-domain National Park Service photographs. Credits
+        and exact sources are in examples/sources.json. No model, GPU, account,
+        or internet connection is needed after installation.
+      </p>
+    </dialog>
+  </body>
+</html>

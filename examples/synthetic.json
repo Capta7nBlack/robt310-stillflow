@@ -1,0 +1,53 @@
+{
+  "name": "Synthetic flow test",
+  "description": "Project-generated analytic texture \u00b7 controlled diagnostics",
+  "image_file": "images/synthetic.png",
+  "polygons": [
+    [
+      [
+        0.08,
+        0.25
+      ],
+      [
+        0.92,
+        0.25
+      ],
+      [
+        0.92,
+        0.75
+      ],
+      [
+        0.08,
+        0.75
+      ]
+    ]
+  ],
+  "arrows": [
+    [
+      0.25,
+      0.5,
+      0.04,
+      0
+    ],
+    [
+      0.5,
+      0.5,
+      0.04,
+      0
+    ],
+    [
+      0.75,
+      0.5,
+      0.04,
+      0
+    ]
+  ],
+  "settings": {
+    "frames": 24,
+    "fps": 12,
+    "intensity": 1,
+    "feather": 12,
+    "blend": 0.4,
+    "loop": true
+  }
+}

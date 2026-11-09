@@ -1,0 +1,13 @@
+.venv/
+.verify-venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+*.egg-info/
+.DS_Store
+.env
+.env.*
+outputs/
+artifacts/browser/
+*.log

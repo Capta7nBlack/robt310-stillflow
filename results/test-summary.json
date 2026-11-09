@@ -1,0 +1,6 @@
+{
+  "tests": 42,
+  "failures": 0,
+  "command": "python -m pytest -q",
+  "browser_check": "See scripts/browser_check.py and actual editor/preview screenshots."
+}
